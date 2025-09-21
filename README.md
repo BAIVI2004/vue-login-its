@@ -25,77 +25,112 @@ El desarrollo se organizará en diferentes ramas (`branch`) para aislar la imple
 
 ---
 
-## Guía de la Rama `tailwind_css` (Actualizada con `@tailwindcss/vite`)
+## Guía de la Rama `js_vs_ts` 
 
-En esta rama, integramos Tailwind CSS para el estilizado de la aplicación, utilizando el plugin oficial para Vite. A continuación se detallan los pasos que se siguieron, basados en la documentación oficial.
+En esta rama aprenderemos a crear un componente de navegacion e insertarlo en nuestro App.vue, y ademas crearemos diferentes componentes para ver el comportamiento de Typescript (usando ejemplos de js como punto de partida). Ademas usaremos "ref" que es una funcion nativa de vue, y slot que es una caracteristica del uso de el template en vue.
 
-### 1. Instalación de Dependencias
+### 1. Creamos el componente de navegacion
 
-Primero, instalamos las dependencias de desarrollo necesarias.
+Primero, creamos una carpeta en el directorio `src` llamada components.
+Dentro creamos el componente sidebar, para ello creamos un archivo llamado Sidebar.vue. Usaremos slots para luego pasar nuestros links de navegacion. Para ello copiamos en el siguiente codigo en el componente:
 
-```bash
-npm install -D tailwindcss @tailwindcss/vite postcss autoprefixer
-```
 
-### 2. Modificamos el archivo vite config
-
-```typescript
-import { defineConfig } from 'vite'
-import tailwindcss from '@tailwindcss/vite' //<-- insertamos esta linea
-export default defineConfig({
-  plugins: [
-    //...
-    tailwindcss(), // insertamos esta linea dentro de plugins
-  ],
-})
-```
-
-### 3. Creamos un archivo css en la raiz de nuestro proyecto e importamos tailwindcss
-
-```bash
-touch main.css
-```
-Dentro del main.css que creamos insertamos la siguiente linea
-```css
-@import "tailwindcss";
-```
-### 4. Importamos nuestro archivo main.css en el index.html raiz de nuestro proyecto
 
 ```html
-<!DOCTYPE html>
-<html lang="">
-
-<head>
-  <meta charset="UTF-8">
-  <link rel="icon" href="/favicon.ico">
-  <!-- insertamos aqui nuestra referencia a main.css -->
-  <link rel="stylesheet" href="main.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vite App</title>
-</head>
-
-<body>
-  <div id="app"></div>
-  <script type="module" src="/src/main.ts"></script>
-</body>
-
-</html>
-```
-
-### 5. Probamos si las clases de tailwind estan funcionando modificando alguno de nuestros componentes
-
-```html
-<!-- /scr/App.vue -->
 <script setup lang="ts"></script>
 
 <template>
-    <!-- insertamos clases tailwind para ver si funciona -->
-    <h1 class="text-2xl text-emerald-950">Tailwind</h1>
-    <p class="text-emerald-500">
-        Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-        documentation
-    </p>
-</template>
+    <nav class="flex flex-col w-[300px] px-4 py-2 bg-gray-200 rounded min-h-screen">
+        <!-- logo -->
+        <div class="flex justify-start items-center h-12 mb-2">
+            <div class="h-12 w-12">
+                <img src="/src/assets/ts-logo-128.png" alt="log ts">
+            </div>
+            <h2 class="px-4 text-2xl font-extrabold m-0 py-0 text-center">TS vs JS</h2>
+        </div>
+        <!-- navegacion -->
+        <slot name="links"></slot>
+    </nav>
+</template> 
+<!-- no se crea style pues no lo usaremos -->
+```
 
-<style scoped></style>
+### 2. Insertamos nuestro componente en App.vue 
+Para utilizar nuestro componente lo importamos en el script:
+
+```typescript
+import Sidebar from './components/Sidebar.vue';
+```
+
+y en nuestro template insertamos el componente, en este caso lo envolvemos en un div:
+
+``` html
+ <div class="flex w-full h-full flex-row">
+    <Sidebar>
+      <!-- usamos el slot "links" que creamos -->
+      <template #links>
+        <RouterLink to="/ejercicio-1" class="text-blue-600">Primer Ejercicio</RouterLink>
+        <RouterLink to="/ejercicio-2" class="text-blue-600">Segundo Ejercicio</RouterLink>
+      </template>
+    </Sidebar>
+  </div>
+```
+La etiqueta RouterLink es un componente especial de Vue Router que reemplaza el uso de etiquetas `<a>` tradicionales.
+Su función es crear enlaces internos dentro de la aplicación sin recargar la página, aprovechando la navegación de una SPA (Single Page Application). Con `to` le indicamos la ruta a la que debe dirigir.
+
+### 3. Creamos los componentes para los ejercicios uno y dos:
+
+Para ello creamos dentro de nuestra carpeta `src/components` una nueva carpeta llamada `ejercicios`, a fin de mantener nuestro codigo ordenado. Dentro de ellos creamos los componentes `EjercicioUno.vue` y `EjercicioDos.vue`. Solo insertaremos codigo base de vue (script + template) en ellos, pues los usaremos mas tarde. 
+
+### 4. Configuracion de rutas en `src/router/routes.ts`:
+
+El archivo router.ts es un archivo de Typescript que nos permite gestionar nuestras rutas.
+Para poder utilizarlo debemos: 
+
+Importar los componentes a los que queremos rutear:
+```typescript
+// ... importaciones anteriores
+import EjercicioUno from '@/components/ejercicios/EjercicioUno.vue'
+import EjercicioDos from '@/components/ejercicios/EjercicioDos.vue'
+```
+Incluir los registros de rutas dentro de la lista `routes`.
+
+Los registros de rutas se definen dentro de la lista routes. Esta lista está compuesta por objetos del tipo RouteRecordRaw, que describen cómo se comporta cada ruta en la aplicación.
+
+Cada objeto de ruta tiene, entre otras, dos propiedades fundamentales:
+
+path → define la URL que activará la ruta (por ejemplo, /about).
+
+component → indica el componente de Vue que se debe renderizar cuando el usuario o la aplicación navegue a esa URL.
+
+En resumen: cuando un usuario accede a una dirección específica de la aplicación, Vue Router busca el path correspondiente en routes y muestra el component asociado a esa ruta.
+
+```typescript
+routes: [
+    { path: '/', component: App },
+    { path: '/ejercicio-1', component: EjercicioUno },
+    { path: '/ejercicio-2', component: EjercicioDos },
+  ],
+```
+
+### 5. Finalmente usamos el `RouterView` dentro de nuestro App.vue para renderizar nuestros componentes:
+
+`RouterView`, que es un “contenedor dinámico” que le indica a Vue dónde debe renderizarse el componente de la ruta activa.
+
+Ejemplo: si estamos en /ejercicio-1, Vue Router mostrará el componente EjercicioUno.vue justo en el lugar donde colocamos <RouterView />.
+
+```html
+  <div class="flex w-full h-full flex-row">
+    <!-- barra lateral -->
+    <Sidebar>
+      <!-- usamos el slot "links" que creamos -->
+      <template #links>
+        <RouterLink to="/ejercicio-1" class="text-blue-600">Primer Ejercicio</RouterLink>
+        <RouterLink to="/ejercicio-2" class="text-blue-600">Segundo Ejercicio</RouterLink>
+      </template>
+    </Sidebar>
+
+    <!-- Renderizacion del componente -->
+    <RouterView />
+  </div>
 ```
