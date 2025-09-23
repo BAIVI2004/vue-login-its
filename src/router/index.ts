@@ -6,7 +6,7 @@ import App from '@/App.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', component: App },
+    // { path: '/', component: App },
     { path: '/ejercicio-1', component: EjercicioUno },
     { path: '/ejercicio-2', component: EjercicioDos },
   ],
