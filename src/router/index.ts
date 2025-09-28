@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import EjercicioUno from '@/components/ejercicios/EjercicioUno.vue'
 import EjercicioDos from '@/components/ejercicios/EjercicioDos.vue'
-import App from '@/App.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
