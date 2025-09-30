@@ -2,13 +2,19 @@
 import type { IconBadgeHouse } from '@/models/HogwartsHouses';
 import CardHouse from './houses/CardHouse.vue';
 
+const props = defineProps<{
+    houses: IconBadgeHouse[]
+}>();
 
-const houses: IconBadgeHouse[] = [
-    { icon: "https://img.icons8.com/color/48/hogwarts-legacy-gryffindor.png", counter: 0, houseName: "Gryffindor" },
-    { icon: "https://img.icons8.com/color/48/hogwarts-legacy-slytherin.png", counter: 0, houseName: "Slytherin" },
-    { icon: "https://img.icons8.com/color/48/hogwarts-legacy-ravenclaw.png", counter: 0, houseName: "Ravenclaw" },
-    { icon: "https://img.icons8.com/color/48/hogwarts-legacy-hufflepuff.png", counter: 100, houseName: "Hufflepuff" }
-]
+const emit = defineEmits(['update:house']);
+
+function assignHouse() {
+    // Generamos un índice aleatorio entre 0 y el número de casas - 1
+    const randomIndex = Math.floor(Math.random() * props.houses.length);
+    // Emitimos un evento al padre con el índice de la casa a actualizar
+    emit('update:house', randomIndex);
+}
+
 
 </script>
 
@@ -21,14 +27,15 @@ const houses: IconBadgeHouse[] = [
                 alumno</h1>
             <!-- boton -->
             <div class="w-full flex flex-col justify-center items-center">
-                <button class="rounded-sm bg-zinc-800 text-white text-xl almendra-regular p-4 cursor-pointer">Seleccion
+                <button @click="assignHouse"
+                    class="rounded-sm bg-zinc-800 text-white text-xl almendra-regular p-4 cursor-pointer transition-transform duration-150 ease-in-out active:scale-95">Seleccion
                     de
                     casa</button>
             </div>
         </div>
         <!-- contenedor de cards -->
         <div class="flex flex-row justify-center items-center w-full">
-            <div v-for="(house, index) in houses" :key="index">
+            <div v-for="(house, index) in props.houses" :key="index">
                 <CardHouse :house-name="house.houseName" :counter="house.counter" :icon="house.icon" />
             </div>
         </div>

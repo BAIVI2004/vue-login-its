@@ -1,5 +1,6 @@
 <script setup lang="ts">
 
+import { ref, watch, computed } from 'vue';
 
 const props = defineProps({
     houseName: {
@@ -17,6 +18,35 @@ const props = defineProps({
 
 
 })
+
+const isHighlighted = ref(false);
+
+// Observamos cambios en la prop 'counter'
+watch(() => props.counter, (newValue, oldValue) => {
+    // Si el contador aumenta, activamos el resaltado
+    if (newValue > oldValue) {
+        isHighlighted.value = true;
+        // Después de 1 segundo, quitamos el resaltado
+        setTimeout(() => {
+            isHighlighted.value = false;
+        }, 1000);
+    }
+});
+
+const highlightColor = computed(() => {
+    switch (props.houseName) {
+        case "Gryffindor":
+            return '#ad0001';
+        case "Slytherin":
+            return '#2a623d';
+        case "Ravenclaw":
+            return '#222f5b';
+        case "Hufflepuff":
+            return '#ffd15f';
+        default:
+            return '#ffffff'; // Color por defecto o transparente
+    }
+});
 
 const houseBadges: string[] = [
     "inline-flex items-center rounded-md bg-red-400/10 px-2 py-1 text-xs font-medium text-red-400 inset-ring inset-ring-red-400/20",
@@ -42,17 +72,18 @@ function detectHouse(houseName: string): number {
 </script>
 
 <template>
-    <div class="h-32 w-64 py-2 px-4 flex flex-row justify-center items-center">
+    <div class="h-40 w-80 py-2 px-4 flex flex-row justify-center items-center">
         <!-- card -->
-        <div class="h-16 w-full rounded-sm p-2 flex flex-row justify-around items-center bg-white">
+        <div class="h-24 w-full rounded-sm p-2 flex flex-row justify-around items-center transition-colors duration-300"
+            :style="{ backgroundColor: isHighlighted ? highlightColor : 'white' }">
             <!-- icono -->
-            <div class="w-10 h-10 p-1 my-auto">
+            <div class="w-14 h-14 p-1 my-auto">
                 <img :src="props.icon" width="48" height="48" alt="hogwarts-house">
             </div>
             <!-- casa -->
-            <h2>{{ props.houseName }}</h2>
+            <h2 class="text-xl">{{ props.houseName }}</h2>
             <!-- contador -->
-            <span :class="houseBadges[detectHouse(props.houseName)]">{{
+            <span :class="[houseBadges[detectHouse(props.houseName)], 'text-xl']">{{
                 props.counter }}</span>
         </div>
     </div>

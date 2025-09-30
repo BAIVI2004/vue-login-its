@@ -1,39 +1,25 @@
 <script setup lang="ts">
-import type { IconBadge } from '@/models/HogwartsHouses';
+import type { IconBadge, IconBadgeHouse } from '@/models/HogwartsHouses';
 
-const iconsWithBadges: IconBadge[] = [
-    { icon: "https://img.icons8.com/color/48/hogwarts-legacy-gryffindor.png", counter: 0 },
-    { icon: "https://img.icons8.com/color/48/hogwarts-legacy-slytherin.png", counter: 0 },
-    { icon: "https://img.icons8.com/color/48/hogwarts-legacy-ravenclaw.png", counter: 0 },
-    { icon: "https://img.icons8.com/color/48/hogwarts-legacy-hufflepuff.png", counter: 100 }
-]
+
+
+defineProps<{
+    houses: IconBadgeHouse[]
+}>();
 
 </script>
 
 
 <template>
-    <div class="w-full h-16 bg-zinc-100 border-b border-zinc-200 flex flex-row-reverse">
+    <div class="w-full h-16 bg-zinc-100 border-b border-zinc-200 flex flex-row">
         <!-- crear un titulo para mi pagina home -->
 
         <!-- switch para cambiar de modo claro a oscuro -->
-        <div class="flex flex-col justify-center items-center border-l border-zinc-200  w-20 h-full">
+        <!-- <div class="flex flex-col justify-center items-center border-l border-zinc-200  w-20 h-full">
             switch
-        </div>
+        </div> -->
 
         <!-- crear iconos con badge -->
-        <div v-for="(icon, index) in iconsWithBadges" :key="index"
-            class="flex flex-col justify-center items-center border-l border-zinc-200  w-40 h-full">
-            <span
-                class="absolute inline-flex -translate-y-4 translate-x-4 items-center rounded-md bg-red-500 py-0 px-1 text-xs font-small text-white inset-ring inset-ring-red-400/20">{{
-                    icon.counter }}
-            </span>
-            <div class="w-10 h-10 p-1 my-auto">
-                <img :src="icon.icon" width="48" height="48" alt="hogwarts-house">
-            </div>
-
-
-        </div>
-
         <!-- crear un titulo para mi pagina home -->
         <div class="flex w-full h-full flex-row justify-start px-8 bg-zinc-100">
             <!-- icono -->
@@ -48,6 +34,20 @@ const iconsWithBadges: IconBadge[] = [
                 </h1>
             </div>
         </div>
+
+        <div v-for="(house, index) in houses" :key="index"
+            class="flex flex-col justify-center items-center border-l border-zinc-200  w-40 h-full">
+            <span
+                class="absolute inline-flex -translate-y-4 translate-x-4 items-center rounded-md bg-red-500 py-0 px-1 text-xs font-small text-white inset-ring inset-ring-red-400/20">{{
+                    house.counter }}
+            </span>
+            <div class="w-10 h-10 p-1 my-auto">
+                <img :src="house.icon" width="48" height="48" :alt="house.houseName">
+            </div>
+
+
+        </div>
+
     </div>
 </template>
 
