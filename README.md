@@ -25,77 +25,36 @@ El desarrollo se organizará en diferentes ramas (`branch`) para aislar la imple
 
 ---
 
-## Guía de la Rama `tailwind_css` (Actualizada con `@tailwindcss/vite`)
 
-En esta rama, integramos Tailwind CSS para el estilizado de la aplicación, utilizando el plugin oficial para Vite. A continuación se detallan los pasos que se siguieron, basados en la documentación oficial.
+## Cambios realizados en la rama `login_page`
 
-### 1. Instalación de Dependencias
+En esta rama, además de integrar Tailwind CSS, se realizaron los siguientes cambios para implementar la funcionalidad de autenticación en la aplicación:
 
-Primero, instalamos las dependencias de desarrollo necesarias.
+### 1. Creación del archivo `.env`
+Se creó un archivo `.env` en la raíz de la aplicación para almacenar variables de entorno. En este archivo, se definió la variable `VITE_API_URL`, que contiene la URL base de la API utilizada por la aplicación.
 
-```bash
-npm install -D tailwindcss @tailwindcss/vite postcss autoprefixer
-```
+### 2. Configuración de la carpeta `api`
+Se creó una estructura dentro de la carpeta `api` para manejar las solicitudes a la API:
+- **`client.ts`**: Archivo que configura un cliente HTTP utilizando Axios. Se añadieron interceptores para incluir el token JWT en las solicitudes y manejar errores de manera centralizada.
+- **`index.ts`**: Archivo que exporta los controladores y tipos relacionados con la API.
+- **Carpeta `auth`**: Contiene los archivos relacionados con la funcionalidad de autenticación:
+  - **`controller.ts`**: Define las funciones para interactuar con los endpoints de autenticación, como registro, inicio de sesión y obtención de datos del usuario.
+  - **`types.ts`**: Define los tipos de datos utilizados en las solicitudes y respuestas de la API de autenticación.
 
-### 2. Modificamos el archivo vite config
+### 3. Creación de la carpeta `services`
+Se creó la carpeta `services` dentro de `src` para manejar la lógica de negocio de la aplicación. En particular, se creó el archivo `useAuthService.ts`, que orquesta las solicitudes relacionadas con la autenticación y actualiza el estado global utilizando Pinia.
 
-```typescript
-import { defineConfig } from 'vite'
-import tailwindcss from '@tailwindcss/vite' //<-- insertamos esta linea
-export default defineConfig({
-  plugins: [
-    //...
-    tailwindcss(), // insertamos esta linea dentro de plugins
-  ],
-})
-```
+### 4. Integración de Axios
+Se instaló la dependencia `axios` para realizar solicitudes HTTP. El cliente configurado en `client.ts` se utiliza en los controladores para interactuar con la API.
 
-### 3. Creamos un archivo css en la raiz de nuestro proyecto e importamos tailwindcss
+### 5. Uso del servicio de autenticación en los componentes
+Se integró el servicio de autenticación en los componentes `LoginForm.vue` y `RegisterForm.vue` para manejar el inicio de sesión y el registro de usuarios. Estos componentes utilizan el servicio para enviar datos a la API y actualizar el estado global de la aplicación.
 
-```bash
-touch main.css
-```
-Dentro del main.css que creamos insertamos la siguiente linea
-```css
-@import "tailwindcss";
-```
-### 4. Importamos nuestro archivo main.css en el index.html raiz de nuestro proyecto
+### Propósito de los cambios
+Estos cambios permiten implementar una funcionalidad básica de autenticación en la aplicación, incluyendo:
+- Registro de nuevos usuarios.
+- Inicio de sesión de usuarios existentes.
+- Gestión del estado de autenticación (usuario actual, sesión activa, errores, etc.) utilizando Pinia.
+- Comunicación con una API externa para manejar la lógica de autenticación.
 
-```html
-<!DOCTYPE html>
-<html lang="">
-
-<head>
-  <meta charset="UTF-8">
-  <link rel="icon" href="/favicon.ico">
-  <!-- insertamos aqui nuestra referencia a main.css -->
-  <link rel="stylesheet" href="main.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vite App</title>
-</head>
-
-<body>
-  <div id="app"></div>
-  <script type="module" src="/src/main.ts"></script>
-</body>
-
-</html>
-```
-
-### 5. Probamos si las clases de tailwind estan funcionando modificando alguno de nuestros componentes
-
-```html
-<!-- /scr/App.vue -->
-<script setup lang="ts"></script>
-
-<template>
-    <!-- insertamos clases tailwind para ver si funciona -->
-    <h1 class="text-2xl text-emerald-950">Tailwind</h1>
-    <p class="text-emerald-500">
-        Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-        documentation
-    </p>
-</template>
-
-<style scoped></style>
-```
+Con esta implementación, la aplicación puede autenticar usuarios y proteger recursos mediante el uso de tokens JWT.

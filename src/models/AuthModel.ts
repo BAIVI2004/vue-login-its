@@ -1,6 +1,16 @@
 export interface Credentials {
     username: string,
-    password: string
+    password: string,
+    tenant_id: string,
+}
+
+export interface NewUser {
+    id?: string,
+    name: string,
+    lastName: string,
+    password?: string,
+    email: string,
+    tenantId: string
 }
 
 export interface Session {
